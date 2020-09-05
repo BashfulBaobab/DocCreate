@@ -8,7 +8,11 @@ from docx.shared import Pt
 def main():
     print("Welcome to the document creation chamber.\nThis program creates .docx files with images and text, in tabular format.\n")
     name = input("Please enter the name you want this document to be given, without the .docx extension.\n")
-    create_doc(name)
+    doc = create_doc(name)
+    images = img_list()
+    
+    doc.save(name + ".docx")
+    print("File " + name + " has been created in the current directory. Fare thee well.")
     
 def create_doc(name):
     doc = Document()
@@ -28,9 +32,22 @@ def create_doc(name):
         p.style.font.size = Pt(14)
         p.style.paragraph_format.space_after = Pt(12)   
     
-    doc.save(name + ".docx")
-    print("File " + name + " has been created in the current directory. Fare thee well.")
-          
+    return doc
+              
+def img_list():
+    data_entry = input("How would you like to enter the images?\n1. Enter manually, one at a time\n2. Enter directory with all images (note that only jpg and png images are supported)\n3. Enter txt file with all images in separate lines\nPlease enter 1, 2, or 3: \t")
+    while data_entry not in ("1", "2", "3"):
+        print("Invalid entry. Please try again.")
+        data_entry = input("How would you like to enter the images?\n1. Enter manually, one at a time\n2. Enter directory with all images (note that only jpg and png images are supported)\n3. Enter a .txt file with all images in separate lines\nPlease enter 1, 2, or 3: \t")
+    #accept manual entries
+    if data_entry == "1":
+        l = []
+        x = input("Enter image locations, either absolute location, or relative to current working directory. If you wish to stop data entry, type esc. Please make sure the locations are correct.\n")
+        while x != "esc":
+            l.append(x)
+            x = input("Enter next image:\n")
+        return l
+    
 
 if __name__ == "__main__":
     main()
