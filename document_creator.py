@@ -14,18 +14,23 @@ def create_doc(name):
     doc = Document()
     title = input("Please enter the title of your document.\n")
     p = doc.add_paragraph(title)
-    doc.save(name + ".docx")
-    print("File " + name + "has been created in the current directory. Fare thee well.")
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p.style = doc.styles['Heading 1']
+    p.style.font.size = Pt(16)
+    p.style.font.bold = True
     
-    sub = input("Does your document have a subheading?\n Y for Yes, N for No\n")
+    sub = input("Does your document have a subheading?\nY for Yes, N for No\n")
     if sub in ("y", "Y"):
         sub = input("Please enter your subheading.\n")
         p = doc.add_paragraph(sub)
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p.style = doc.styles['Heading 2']
         p.style.font.size = Pt(14)
-        p.style.paragraph_format.space_after = Pt(12)    
+        p.style.paragraph_format.space_after = Pt(12)   
     
+    doc.save(name + ".docx")
+    print("File " + name + " has been created in the current directory. Fare thee well.")
+          
 
 if __name__ == "__main__":
     main()
