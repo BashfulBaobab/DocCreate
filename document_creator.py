@@ -8,6 +8,7 @@ from os import listdir
 from os.path import isfile, join
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.shared import Inches
+from PIL import Image
 
 def main():
     print("Welcome to the document creation chamber.\nThis program creates .docx files with images and text, in tabular format.\n")
@@ -17,8 +18,8 @@ def main():
     rows = input("Would you like the tables to have 6 images or 8?\n")
     while rows not in ("6", "8"):
         rows = input("Would you like the tables to have 6 images or 8?\n")
-    
-    table_op(images, int(rows), doc)
+    com = input("Do you want the ouput file to be compressed? Y/N\n")
+    table_op(images, int(rows), doc, com)
     
     doc.save(name + ".docx")
     print("File " + name + " has been created in the current directory. Fare thee well.")
@@ -76,7 +77,7 @@ def img_list():
             l.append(line.strip())
         return l
     
-def table_op(images, row_num, doc):
+def table_op(images, row_num, doc, com):
     
     def remove_row(table, row):
         tbl = table._tbl
@@ -105,9 +106,10 @@ def table_op(images, row_num, doc):
         run = paragraph.add_run()
         i1 = images[counter]
         counter += 1
-        
+        if com == "y" or "Y":
+            i1 = compressor(i1)
         if row_num/2 == 3:
-                run.add_picture(i1, height = Inches(2))
+            run.add_picture(i1, height = Inches(2))
         else:
             run.add_picture(i1, height = Inches(1.5))
 
@@ -115,6 +117,8 @@ def table_op(images, row_num, doc):
             paragraph = row_cells[1].paragraphs[0]
             run = paragraph.add_run()
             i2 = images[counter]
+            if com == "y" or "Y":
+                i2 = compressor(i2)
             if row_num/2 == 3:
                 run.add_picture(i2, height = Inches(2))
             else:
@@ -123,6 +127,15 @@ def table_op(images, row_num, doc):
     
     row = tbl.rows[0]
     remove_row(tbl, row)
+    
+def compressor(img):
+    x = Image.open(img)
+    y = x.size
+    r = tuple(int(round(i/4)) for i in y)
+    x = x.resize(r, Image.ANTIALIAS)
+    #saving image because docx and PIL Image are not compatible.
+    x.save("scaled_img.jpg", optimize = True, quality = 95)
+    return ("scaled_img.jpg")
 
 if __name__ == "__main__":
     main()
