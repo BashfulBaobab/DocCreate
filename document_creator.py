@@ -56,6 +56,18 @@ def img_list():
         mypath = input("Enter directory:\n")
         l = [f for f in listdir(mypath) if (isfile(join(mypath, f)) and (f.endswith(".png") or f.endswith(".JPG")))]
         return l
-
+    
+    #accept txt file with list of images
+    else:
+        l = []
+        f = input("Enter the .txt file:\n")
+        f = open(f, 'r')
+        while 1:
+            line = f.readline()
+            if not line:
+                break
+            l.append(line.strip())
+        return l
+    
 if __name__ == "__main__":
     main()
