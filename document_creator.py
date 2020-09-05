@@ -6,12 +6,19 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Pt
 from os import listdir
 from os.path import isfile, join
+from docx.enum.table import WD_TABLE_ALIGNMENT
+from docx.shared import Inches
 
 def main():
     print("Welcome to the document creation chamber.\nThis program creates .docx files with images and text, in tabular format.\n")
     name = input("Please enter the name you want this document to be given, without the .docx extension.\n")
     doc = create_doc(name)
     images = img_list()
+    rows = input("Would you like the tables to have 6 images or 8?\n")
+    while rows not in ("6", "8"):
+        rows = input("Would you like the tables to have 6 images or 8?\n")
+    
+    table_op(images, int(rows), doc)
     
     doc.save(name + ".docx")
     print("File " + name + " has been created in the current directory. Fare thee well.")
@@ -69,5 +76,53 @@ def img_list():
             l.append(line.strip())
         return l
     
+def table_op(images, row_num, doc):
+    
+    def remove_row(table, row):
+        tbl = table._tbl
+        tr = row._tr
+        tbl.remove(tr)
+    
+    tbl = doc.add_table(rows = 1, cols = 2)
+    tbl.style = 'TableGrid'
+    tbl.alignment = WD_TABLE_ALIGNMENT.CENTER
+    
+    #list is 0 indexed 
+    counter = 0
+    
+    for i in range((len(images)+1)//2):
+        if i%(row_num/2) == 0 and i!= 0:
+            row = tbl.rows[0]
+            remove_row(tbl, row)
+            doc.add_page_break()
+            tbl = doc.add_table(rows = 1, cols = 2)
+            tbl.style = 'TableGrid'
+            tbl.alignment = WD_TABLE_ALIGNMENT.CENTER
+    
+        row_cells = tbl.add_row().cells
+        #cell = row_cells[0]
+        paragraph = row_cells[0].paragraphs[0]
+        run = paragraph.add_run()
+        i1 = images[counter]
+        counter += 1
+        
+        if row_num/2 == 3:
+                run.add_picture(i1, height = Inches(2))
+        else:
+            run.add_picture(i1, height = Inches(1.5))
+
+        if counter != len(images):
+            paragraph = row_cells[1].paragraphs[0]
+            run = paragraph.add_run()
+            i2 = images[counter]
+            if row_num/2 == 3:
+                run.add_picture(i2, height = Inches(2))
+            else:
+                run.add_picture(i2, height = Inches(1.5))
+        tbl.add_row()
+    
+    row = tbl.rows[0]
+    remove_row(tbl, row)
+
 if __name__ == "__main__":
     main()
