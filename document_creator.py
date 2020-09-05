@@ -4,6 +4,8 @@
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Pt
+from os import listdir
+from os.path import isfile, join
 
 def main():
     print("Welcome to the document creation chamber.\nThis program creates .docx files with images and text, in tabular format.\n")
@@ -48,6 +50,12 @@ def img_list():
             x = input("Enter next image:\n")
         return l
     
+    #accept directory with all images
+    elif data_entry == "2":
+        x = (".png", ".jpg")
+        mypath = input("Enter directory:\n")
+        l = [f for f in listdir(mypath) if (isfile(join(mypath, f)) and (f.endswith(".png") or f.endswith(".JPG")))]
+        return l
 
 if __name__ == "__main__":
     main()
