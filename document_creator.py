@@ -9,6 +9,7 @@ from os.path import isfile, join
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.shared import Inches
 from PIL import Image
+import warnings
 
 def main():
     print("Welcome to the document creation chamber.\nThis program creates .docx files with images and text, in tabular format.\n")
@@ -17,7 +18,7 @@ def main():
     images = img_list()
     rows = input("Would you like the tables to have 6 images or 8?\n")
     while rows not in ("6", "8"):
-        rows = input("Would you like the tables to have 6 images or 8?\n")
+        rows = input("Would you like the tables to have 6 images or 8?\nNote that if you enter less than 6 or 8, respectively, the table will create with the closest even number of rows that will fit the images.\n" )
     com = input("Do you want the ouput file to be compressed? Y/N\n")
     table_op(images, int(rows), doc, com)
     
@@ -55,7 +56,7 @@ def img_list():
         x = input("Enter image locations, either absolute location, or relative to current working directory. If you wish to stop data entry, type esc. Please make sure the locations are correct.\n")
         while x != "esc":
             l.append(x)
-            x = input("Enter next image:\n")
+            x = input("Enter next image, or type escc to end input:\n")
         return l
     
     #accept directory with all images
@@ -138,4 +139,6 @@ def compressor(img):
     return ("scaled_img.jpg")
 
 if __name__ == "__main__":
-    main()
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        main()
