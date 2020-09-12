@@ -56,7 +56,7 @@ def img_list():
         x = input("Enter image locations, either absolute location, or relative to current working directory. If you wish to stop data entry, type esc. Please make sure the locations are correct.\n")
         while x != "esc":
             l.append(x)
-            x = input("Enter next image, or type escc to end input:\n")
+            x = input("Enter next image, or type esc to end input:\n")
         return l
     
     #accept directory with all images
@@ -131,6 +131,7 @@ def table_op(images, row_num, doc, com):
     
 def compressor(img):
     x = Image.open(img)
+    x = x.convert("RGB")
     y = x.size
     r = tuple(int(round(i/4)) for i in y)
     x = x.resize(r, Image.ANTIALIAS)
